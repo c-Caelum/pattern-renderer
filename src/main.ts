@@ -3,8 +3,8 @@ import {DEFAULT_SETTINGS, PatternRendererPluginSettings, SampleSettingTab} from 
 import init_renderer, { draw_bound_hex_grid, draw_bound_square_grid, EndPoint, GridOptions, PatternVariant, PatternVariantArray} from 'hex_renderer_javascript';
 //@ts-ignore
 import hex_renderer_wasm from "hex_renderer_javascript/hex_renderer_javascript_bg.wasm";
+import {getOptions} from "options"
 import { ok } from 'assert';
-import { pathToFileURL } from 'url';
 
 const gradient = {
     line_thickness: 0.12,
@@ -63,52 +63,7 @@ export default class PatternRendererPlugin extends Plugin {
 			radius: 0.24
 		}
 	}
-	const options : GridOptions = {
-		line_thickness: 2,
-		pattern_options: {
-			type: 'Uniform',
-			intersections: {
-				type: "EndsAndMiddle",
-				start: start_point,
-				middle: {
-					type: "Single",
-					marker: {
-						color: [168, 30, 227, 255],
-						radius: 0.24
-					}
-				},
-				end: start_point,
-			},
-			lines: {
-				type: 'SegmentColors',
-				colors: [
-                	[214, 9, 177, 255],
-                	[108, 25, 140, 255],
-                	[50, 102, 207, 255],
-                	[102, 110, 125, 255],
-            	],
-				triangles: {
-					type: "BorderStartMatch",
-					match_radius: 0.16,
-					border: {
-						color: [168, 30, 227, 255],
-						radius: 0.24
-					}
-				},
-				collisions: {
-					type: "OverloadedParallel",
-					max_line: 4,
-					overload: {
-						type: "Dashes",
-						color: [221, 0, 0, 255]
-					}
-				}
-			}
-		},
-		center_dot: {
-			type: 'None'
-		}
-	}
+	const options = getOptions(false, true)
 
 		// This creates an icon in the left ribbon.
 		this.addRibbonIcon('dice', 'Sample', (evt: MouseEvent) => {
@@ -131,44 +86,35 @@ export default class PatternRendererPlugin extends Plugin {
 
 		this.registerMarkdownCodeBlockProcessor('patterns',(source : string, element : HTMLElement, ctx : MarkdownPostProcessorContext) => {
 			const patterns = source.split("\n").filter((patterns) => patterns.length > 0);
+
 			const patternVariants : PatternVariantArray = patterns.map((value: string) => {
+				const val = value.replace(RegExp("^\\s*"),"")
+				const info = val.split(",");
+				ok(info[0]);ok(info[1]);
 				const pattern : PatternVariant = {
-					direction: 'SOUTH_EAST',
-					angle_sigs: 'aqqa',
+					direction: info[0],
+					angle_sigs: info[1],
 					great_spell: false
 				}
 				return pattern
 			});
-			
-			patterns.forEach((value : String) => {
-				const info = value.split(",");
-				console.log(info)
-				const startdir = info.at(0);
-				const anglesigs = info.at(1);
-				ok(info);ok(startdir);ok(anglesigs);
-				const pattern : PatternVariant = {
-					direction: startdir,
-					angle_sigs: anglesigs,
-					great_spell: false
-				}
-				patternVariants.push(pattern)
-			})
 
 			const canvas = element.createEl('canvas');
 			const context = canvas.getContext("2d");
 			ok(context)
-			
-			console.log(options);
-			console.log(patternVariants);
-
-			const png : Uint8Array = draw_bound_square_grid(options, patternVariants, 15, 0.5, 0.5, 0.5, canvas.width, canvas.height)
+			const png : Uint8Array = draw_bound_square_grid(options, patternVariants, 15, 0.5, 0.01, 0.01, window.innerWidth, (window.innerHeight / 10) * patternVariants.length)
 			ok(png)
 			ok(png.buffer)
 			const clampedData = new Uint8ClampedArray(png);
-			const imageData = new ImageData(clampedData, canvas.width, canvas.height);
-			context.putImageData(imageData, 0, 0)
+			// const imageData = new ImageData(clampedData, canvas.width, canvas.height);
+			const a = element.createEl("img");
+			
+			a.src = URL.createObjectURL(
+  				new Blob([clampedData.buffer], { type: 'image/png' } /* (1) */)
+			);
+			//context.putImageData(imageData, 0, 0)
 
-			element.replaceWith(canvas)
+			element.replaceWith(a)
 		})
 
 		// This adds an editor command that can perform some operation on the current editor instance

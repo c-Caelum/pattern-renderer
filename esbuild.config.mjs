@@ -1,7 +1,9 @@
 import esbuild from "esbuild";
 import process from "process";
-const path = require("node:path");
 import { builtinModules } from 'node:module';
+
+import * as path from "node:path"
+import * as fs from "node:fs"
 
 const banner =
 `/*
@@ -39,6 +41,7 @@ const context = await esbuild.context({
 	},
 	entryPoints: ["src/main.ts"],
 	bundle: true,
+	platform:"node",
 	external: [
 		"obsidian",
 		"electron",
