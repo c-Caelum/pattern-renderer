@@ -17,7 +17,7 @@ const wasmPlugin = {
 		console.log(args);
 		return {
             // FIXME: hack
-            path: args.path,
+            path: path.join("../node_modules", args.path),
             namespace: "wasm-binary",
         };
 	
