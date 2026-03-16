@@ -1,5 +1,6 @@
 import esbuild from "esbuild";
 import process from "process";
+const path = require("node:path");
 import { builtinModules } from 'node:module';
 
 const banner =
@@ -17,7 +18,7 @@ const wasmPlugin = {
 		console.log(args);
 		return {
             // FIXME: hack
-            path: path.join("../node_modules", args.path),
+            path: path.join("node_modules", args.path),
             namespace: "wasm-binary",
         };
 	

@@ -2,7 +2,7 @@ import {App, Editor, MarkdownPostProcessorContext, MarkdownView, Modal, Notice, 
 import {DEFAULT_SETTINGS, PatternRendererPluginSettings, SampleSettingTab} from "./settings";
 import init_renderer, { draw_bound_hex_grid, draw_bound_square_grid, EndPoint, GridOptions, PatternVariant, PatternVariantArray} from 'hex_renderer_javascript';
 //@ts-ignore
-import hex_renderer_wasm from "../node_modules/hex_renderer_javascript/hex_renderer_javascript_bg.wasm";
+import hex_renderer_wasm from "hex_renderer_javascript/hex_renderer_javascript_bg.wasm";
 import { ok } from 'assert';
 import { pathToFileURL } from 'url';
 
