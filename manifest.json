@@ -1,0 +1,11 @@
+{
+	"id": "pattern-renderer",
+	"name": "Pattern Renderer",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Renders Hex Casting patterns.",
+	"author": "Caelum",
+	"authorUrl": "",
+	"fundingUrl": "",
+	"isDesktopOnly": false
+}
